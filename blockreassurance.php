@@ -511,19 +511,21 @@ class blockreassurance extends Module implements WidgetInterface
      */
     private function renderTemplateInHook($template)
     {
-        $id_lang = $this->context->language->id;
+        if (!$this->isCached($template, $this->getCacheId($template))) {
+            $id_lang = $this->context->language->id;
 
-        $this->context->smarty->assign([
-            'blocks' => ReassuranceActivity::getAllBlockByStatus($id_lang, $this->context->shop->id),
-            'iconColor' => Configuration::get('PSR_ICON_COLOR'),
-            'textColor' => Configuration::get('PSR_TEXT_COLOR'),
-            // constants
-            'LINK_TYPE_NONE' => ReassuranceActivity::TYPE_LINK_NONE,
-            'LINK_TYPE_CMS' => ReassuranceActivity::TYPE_LINK_CMS_PAGE,
-            'LINK_TYPE_URL' => ReassuranceActivity::TYPE_LINK_URL,
-        ]);
+            $this->context->smarty->assign(array(
+              'blocks' => ReassuranceActivity::getAllBlockByStatus($id_lang, $this->context->shop->id),
+              'iconColor' => Configuration::get('PSR_ICON_COLOR'),
+              'textColor' => Configuration::get('PSR_TEXT_COLOR'),
+                // constants
+              'LINK_TYPE_NONE' => ReassuranceActivity::TYPE_LINK_NONE,
+              'LINK_TYPE_CMS' => ReassuranceActivity::TYPE_LINK_CMS_PAGE,
+              'LINK_TYPE_URL' => ReassuranceActivity::TYPE_LINK_URL,
+            ));
+        }
 
-        return $this->display(__FILE__, 'views/templates/hook/' . $template);
+        return $this->display(__FILE__, 'views/templates/hook/' . $template, $this->getCacheId($template));
     }
 
     /**
